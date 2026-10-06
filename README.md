@@ -51,7 +51,7 @@ BASE_URL=https://seu-ambiente npm test
 - `docs/resultado-execucao.md`: resultados da execução manual e automatizada, bugs e uso de IA.
 - `docs/bugs-encontrados.md`: defeitos observados contra os critérios de aceite.
 - `docs/evidencias/bug-001/`: capturas de tela do passo a passo para reproduzir o problema de frete.
-- `docs/evidencias/bug-001/bug-001-frete-no-limite.webm`: vídeo curto da reprodução do BUG-001.
+- `docs/evidencias/bug-001/bug-001-frete-no-limite.webm`: vídeo curto da reprodução do BUG-001, com círculos nos valores incorretos.
 - `playwright-report/`: relatório HTML após a execução.
 - `test-results/`: traces e screenshots de falhas.
 

@@ -7,6 +7,36 @@ const evidenceDirectory = path.join(__dirname, '..', 'docs', 'evidencias', 'bug-
 const videoDirectory = path.join(evidenceDirectory, 'video-tmp');
 const videoPath = path.join(evidenceDirectory, 'bug-001-frete-no-limite.webm');
 
+async function clearVideoAnnotations(page) {
+  await page.evaluate(() => {
+    document.querySelectorAll('[data-video-annotation]').forEach((annotation) => annotation.remove());
+  });
+}
+
+async function circleVideoTarget(page, target) {
+  const box = await target.boundingBox();
+  if (!box) throw new Error('Nao foi possivel localizar o valor para destacar no video.');
+
+  await page.evaluate(({ box }) => {
+    const namespace = 'http://www.w3.org/2000/svg';
+    const overlay = document.createElementNS(namespace, 'svg');
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.setAttribute('data-video-annotation', '');
+    overlay.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;overflow:visible;pointer-events:none;z-index:2147483647';
+
+    const circle = document.createElementNS(namespace, 'ellipse');
+    circle.setAttribute('cx', String(box.x + box.width / 2));
+    circle.setAttribute('cy', String(box.y + box.height / 2));
+    circle.setAttribute('rx', String(Math.max(box.width / 2 + 18, 55)));
+    circle.setAttribute('ry', String(Math.max(box.height / 2 + 12, 22)));
+    circle.setAttribute('fill', 'none');
+    circle.setAttribute('stroke', '#ff3b56');
+    circle.setAttribute('stroke-width', '5');
+    overlay.append(circle);
+    document.body.append(overlay);
+  }, { box });
+}
+
 async function captureVideo() {
   await fs.mkdir(videoDirectory, { recursive: true });
 
@@ -33,11 +63,15 @@ async function captureVideo() {
 
     await page.getByRole('link', { name: /Carrinho/ }).click();
     await page.getByText('Subtotal', { exact: true }).waitFor();
+    await circleVideoTarget(page, page.locator('dd[data-valor="frete"]'));
     await page.waitForTimeout(1800);
 
+    await clearVideoAnnotations(page);
     await page.getByRole('textbox', { name: 'Cupom de desconto' }).fill('BEMVINDO10');
     await page.getByRole('button', { name: 'Aplicar cupom' }).click();
     await page.getByText(/Cupom .* aplicado\./).waitFor();
+    await circleVideoTarget(page, page.locator('dd[data-valor="frete"]'));
+    await circleVideoTarget(page, page.locator('dd[data-valor="total"]'));
     await page.waitForTimeout(2000);
   } finally {
     await context.close();

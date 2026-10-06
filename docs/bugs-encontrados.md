@@ -16,7 +16,7 @@
 	- `docs/evidencias/bug-001/02-produto-adicionado-duas-vezes.png`
 	- `docs/evidencias/bug-001/03-carrinho-subtotal-200-frete-cobrado.png`
 	- `docs/evidencias/bug-001/04-carrinho-apos-cupom.png`
-- Video curto com a reproducao completa: [bug-001-frete-no-limite.webm](evidencias/bug-001/bug-001-frete-no-limite.webm), gerado com `npm run video:bug-001`.
+- Video curto com circulos destacando o frete e o total: [bug-001-frete-no-limite.webm](evidencias/bug-001/bug-001-frete-no-limite.webm), gerado com `npm run video:bug-001`.
 - Evidencias automatizadas: casos Playwright CA06 e CA08, com traces e screenshots em `test-results/`.
 
 ### Evidencias visuais passo a passo
