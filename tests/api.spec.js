@@ -13,6 +13,7 @@ const validCustomer = {
   cep: '01310-100',
 };
 
+// CA01: API aplica 10% de desconto sobre os produtos.
 test('CA01: API aplica 10% de desconto sobre os produtos', async ({ request }) => {
   const response = await calculateCart(request, [{ produtoId: 'P005', quantidade: 1 }], 'BEMVINDO10');
   const body = await response.json();
@@ -25,6 +26,7 @@ test('CA01: API aplica 10% de desconto sobre os produtos', async ({ request }) =
   expect(body.cupom.aplicado).toBe(true);
 });
 
+// CA02: API aceita cupom em minusculas e com espacos externos.
 test('CA02: API aceita cupom em minusculas e com espacos externos', async ({ request }) => {
   const response = await calculateCart(request, [{ produtoId: 'P005', quantidade: 1 }], '  bemvindo10  ');
   const body = await response.json();
@@ -34,6 +36,7 @@ test('CA02: API aceita cupom em minusculas e com espacos externos', async ({ req
   expect(body.desconto).toBe(10);
 });
 
+// CA03: API informa cupom inexistente sem aplicar desconto.
 test('CA03: API informa cupom inexistente sem aplicar desconto', async ({ request }) => {
   const response = await calculateCart(request, [{ produtoId: 'P005', quantidade: 1 }], 'CUPOM_INVALIDO');
   const body = await response.json();
@@ -44,6 +47,7 @@ test('CA03: API informa cupom inexistente sem aplicar desconto', async ({ reques
   expect(body.desconto).toBe(0);
 });
 
+// CA04: API informa cupom expirado sem aplicar desconto.
 test('CA04: API informa cupom expirado sem aplicar desconto', async ({ request }) => {
   const response = await calculateCart(request, [{ produtoId: 'P005', quantidade: 1 }], 'VERAO2026');
   const body = await response.json();
@@ -54,6 +58,7 @@ test('CA04: API informa cupom expirado sem aplicar desconto', async ({ request }
   expect(body.desconto).toBe(0);
 });
 
+// CA06: API oferece frete gratis no limite de R$ 200,00.
 test('CA06: API oferece frete gratis no limite de R$ 200,00', async ({ request }) => {
   const response = await calculateCart(request, [{ produtoId: 'P005', quantidade: 2 }]);
   const body = await response.json();
@@ -65,6 +70,7 @@ test('CA06: API oferece frete gratis no limite de R$ 200,00', async ({ request }
   expect(body.valorFaltanteFreteGratis).toBe(0);
 });
 
+// CA07: API calcula frete fixo e valor faltante abaixo de R$ 200,00.
 test('CA07: API calcula frete fixo e valor faltante abaixo de R$ 200,00', async ({ request }) => {
   const response = await calculateCart(request, [{ produtoId: 'P003', quantidade: 1 }]);
   const body = await response.json();
@@ -76,6 +82,7 @@ test('CA07: API calcula frete fixo e valor faltante abaixo de R$ 200,00', async 
   expect(body.valorFaltanteFreteGratis).toBe(10.1);
 });
 
+// CA08: frete gratis usa o subtotal antes do desconto.
 test('CA08: frete gratis usa o subtotal antes do desconto', async ({ request }) => {
   const response = await calculateCart(request, [{ produtoId: 'P005', quantidade: 2 }], 'BEMVINDO10');
   const body = await response.json();
@@ -87,6 +94,7 @@ test('CA08: frete gratis usa o subtotal antes do desconto', async ({ request }) 
   expect(body.total).toBe(180);
 });
 
+// CA09: API nao aplica o desconto do cupom sobre o frete.
 test('CA09: API nao aplica o desconto do cupom sobre o frete', async ({ request }) => {
   const response = await calculateCart(request, [{ produtoId: 'P003', quantidade: 1 }], 'BEMVINDO10');
   const body = await response.json();
@@ -98,6 +106,7 @@ test('CA09: API nao aplica o desconto do cupom sobre o frete', async ({ request 
   expect(body.total).toBe(190.81);
 });
 
+// CA10: API aceita cinco unidades e rejeita seis.
 test('CA10: API aceita cinco unidades e rejeita seis', async ({ request }) => {
   const validResponse = await calculateCart(request, [{ produtoId: 'P001', quantidade: 5 }]);
   const validBody = await validResponse.json();
@@ -111,6 +120,7 @@ test('CA10: API aceita cinco unidades e rejeita seis', async ({ request }) => {
   expect((await overLimitResponse.json()).erro.codigo).toBe('QUANTIDADE_MAXIMA_EXCEDIDA');
 });
 
+// CA11: API retorna os valores monetarios com precisao de centavos.
 test('CA11: API retorna os valores monetarios com precisao de centavos', async ({ request }) => {
   const response = await calculateCart(request, [{ produtoId: 'P001', quantidade: 3 }], 'BEMVINDO10');
   const body = await response.json();
@@ -122,6 +132,7 @@ test('CA11: API retorna os valores monetarios com precisao de centavos', async (
   expect(body.total).toBe(181.63);
 });
 
+// API: cria pedido com resumo de valores e numero no formato esperado.
 test('API: cria pedido com resumo de valores e numero no formato esperado', async ({ request }) => {
   const response = await request.post('/api/pedidos', {
     data: {
@@ -140,6 +151,7 @@ test('API: cria pedido com resumo de valores e numero no formato esperado', asyn
   expect(body.total).toBe(109.9);
 });
 
+// API: pedido com cupom expirado retorna erro 422.
 test('API: pedido com cupom expirado retorna erro 422', async ({ request }) => {
   const response = await request.post('/api/pedidos', {
     data: {

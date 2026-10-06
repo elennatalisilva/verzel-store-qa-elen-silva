@@ -30,10 +30,12 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/');
 });
 
+// CA00: abre a pagina inicial da loja.
 test('CA00: abre a pagina inicial da loja', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Frete grátis a partir de R$ 200,00.' })).toBeVisible();
 });
 
+// CA01: aplica 10% sobre o subtotal dos produtos.
 test('CA01: aplica 10% sobre o subtotal dos produtos', async ({ page }) => {
   await addProductToCart(page, 'Mochila Urbana 20L');
   await applyCoupon(page, 'BEMVINDO10');
@@ -44,6 +46,7 @@ test('CA01: aplica 10% sobre o subtotal dos produtos', async ({ page }) => {
   await expect(summaryValue(page, 'Total')).toHaveText('R$ 109,90');
 });
 
+// CA02: aceita o codigo do cupom em letras minusculas.
 test('CA02: aceita o codigo do cupom em letras minusculas', async ({ page }) => {
   await addProductToCart(page, 'Mochila Urbana 20L');
   await applyCoupon(page, 'bemvindo10');
@@ -51,6 +54,7 @@ test('CA02: aceita o codigo do cupom em letras minusculas', async ({ page }) => 
   await expect(summaryValue(page, 'Desconto')).toContainText('R$ 10,00');
 });
 
+// CA02: ignora espacos no inicio e no fim do cupom.
 test('CA02: ignora espacos no inicio e no fim do cupom', async ({ page }) => {
   await addProductToCart(page, 'Mochila Urbana 20L');
   await applyCoupon(page, '  BEMVINDO10  ');
@@ -58,6 +62,7 @@ test('CA02: ignora espacos no inicio e no fim do cupom', async ({ page }) => {
   await expect(summaryValue(page, 'Desconto')).toContainText('R$ 10,00');
 });
 
+// CA03: cupom inexistente exibe erro e nao aplica desconto.
 test('CA03: cupom inexistente exibe erro e nao aplica desconto', async ({ page }) => {
   await addProductToCart(page, 'Mochila Urbana 20L');
   await applyCoupon(page, 'CUPOM_INVALIDO');
@@ -66,6 +71,7 @@ test('CA03: cupom inexistente exibe erro e nao aplica desconto', async ({ page }
   await expect(summaryValue(page, 'Desconto')).toHaveText('R$ 0,00');
 });
 
+// CA04: cupom expirado exibe erro e nao aplica desconto.
 test('CA04: cupom expirado exibe erro e nao aplica desconto', async ({ page }) => {
   await addProductToCart(page, 'Mochila Urbana 20L');
   await applyCoupon(page, 'VERAO2026');
@@ -74,6 +80,7 @@ test('CA04: cupom expirado exibe erro e nao aplica desconto', async ({ page }) =
   await expect(summaryValue(page, 'Desconto')).toHaveText('R$ 0,00');
 });
 
+// CA05: remove o cupom atual antes de aplicar outro.
 test('CA05: remove o cupom atual antes de aplicar outro', async ({ page }) => {
   await addProductToCart(page, 'Mochila Urbana 20L');
   await applyCoupon(page, 'BEMVINDO10');
@@ -86,6 +93,7 @@ test('CA05: remove o cupom atual antes de aplicar outro', async ({ page }) => {
   await expect(summaryValue(page, 'Desconto')).toHaveText('R$ 0,00');
 });
 
+// CA06: frete gratis a partir de subtotal de R$ 200,00.
 test('CA06: frete gratis a partir de subtotal de R$ 200,00', async ({ page }) => {
   await addProductToCart(page, 'Mochila Urbana 20L', 2);
 
@@ -93,6 +101,7 @@ test('CA06: frete gratis a partir de subtotal de R$ 200,00', async ({ page }) =>
   await expect(summaryValue(page, 'Frete')).toHaveText('R$ 0,00');
 });
 
+// CA07: abaixo de R$ 200,00 cobra frete e informa o valor faltante.
 test('CA07: abaixo de R$ 200,00 cobra frete e informa o valor faltante', async ({ page }) => {
   await addProductToCart(page, 'Tênis Casual Urbano');
 
@@ -100,6 +109,7 @@ test('CA07: abaixo de R$ 200,00 cobra frete e informa o valor faltante', async (
   await expect(page.getByText('Faltam R$ 10,10 para o frete grátis.')).toBeVisible();
 });
 
+// CA08: frete gratis considera o subtotal antes do desconto.
 test('CA08: frete gratis considera o subtotal antes do desconto', async ({ page }) => {
   await addProductToCart(page, 'Mochila Urbana 20L', 2);
   await applyCoupon(page, 'BEMVINDO10');
@@ -110,6 +120,7 @@ test('CA08: frete gratis considera o subtotal antes do desconto', async ({ page 
   await expect(summaryValue(page, 'Total')).toHaveText('R$ 180,00');
 });
 
+// CA09: o desconto do cupom nao incide sobre o frete.
 test('CA09: o desconto do cupom nao incide sobre o frete', async ({ page }) => {
   await addProductToCart(page, 'Tênis Casual Urbano');
   await applyCoupon(page, 'BEMVINDO10');
@@ -120,6 +131,7 @@ test('CA09: o desconto do cupom nao incide sobre o frete', async ({ page }) => {
   await expect(summaryValue(page, 'Total')).toHaveText('R$ 190,81');
 });
 
+// CA10: interface limita cada produto a cinco unidades.
 test('CA10: interface limita cada produto a cinco unidades', async ({ page }) => {
   await addProductToCart(page, 'Camiseta Essencial', 5);
 
@@ -127,6 +139,7 @@ test('CA10: interface limita cada produto a cinco unidades', async ({ page }) =>
   await expect(page.getByRole('button', { name: 'Aumentar quantidade de Camiseta Essencial' })).toBeDisabled();
 });
 
+// CA11: arredonda valores monetarios para duas casas decimais.
 test('CA11: arredonda valores monetarios para duas casas decimais', async ({ page }) => {
   await addProductToCart(page, 'Camiseta Essencial');
   await applyCoupon(page, 'BEMVINDO10');
