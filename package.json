@@ -1,0 +1,21 @@
+{
+  "name": "verzel-store-qa",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test tests/ui.spec.js",
+    "test:api": "playwright test tests/api.spec.js",
+    "test:report": "playwright show-report",
+    "evidence:bug-001": "node scripts/capture-bug-001-evidence.js",
+    "video:bug-001": "node scripts/capture-bug-001-video.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}
